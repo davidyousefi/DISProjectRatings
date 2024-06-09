@@ -4,4 +4,4 @@ CREATE TABLE IF NOT EXISTS Titles(
 
 copy Titles(title)
 from 'C:PATH\data\NetflixTitles.csv'
-CSV HEADER
+CSV HEADER;
