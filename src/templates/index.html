@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix Titles</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #740909;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            text-align: center;
+            width: 100%;
+        }
+        .titles {
+            max-width: 600px;
+            margin: 20px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 100%;
+        }
+        .title-item {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .title-item:last-child {
+            border-bottom: none;
+        }
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 20px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            width: 100%;
+            display: flex;
+        }
+        .search-bar {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .search-button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .search-button:hover {
+            background-color: #0056b3;
+        }
+        .number-container {
+            position: fixed;
+            right: 20px;
+            top: 100px;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .number-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 40px;
+            justify-content: center;
+        }
+        .number-item:hover {
+            background-color: #0056b3;
+        }
+        .rating-text {
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const numberItems = document.querySelectorAll('.number-item');
+            numberItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const rating = this.innerText;
+                    const titleElement = document.querySelector('.title-item');
+                    const title = titleElement.querySelector('span:first-child').innerText;
+
+                    const formData = new FormData();
+                    formData.append('title', title);
+                    formData.append('rating', rating);
+
+                    fetch('/rate', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        alert(data);
+                        // Update the rating in the UI
+                        titleElement.querySelector('span:last-child').innerText = rating;
+                    });
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Netflix Titles</h1>
+    <div class="search-container">
+        <form action="/search" method="get">
+            <input type="text" name="query" class="search-bar" placeholder="Search...">
+            <button type="submit" class="search-button">Search</button>
+        </form>
+    </div>
+    <div class="titles">
+        {% for title, rating in titles %}
+            <div class="title-item">
+                <span>{{ title }}</span>
+                <span>{{ rating }}</span>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="number-container">
+        <div class="rating-text">Your Rating</div>
+        {% for i in range(1, 11) %}
+            <div class="number-item">{{ i }}</div>
+        {% endfor %}
+    </div>
+</body>
+</html>
